@@ -152,6 +152,54 @@ class InpaintingOperator(LinearOperator):
         return data - self.forward(data, **kwargs)
 
 
+@register_operator(name='oddeven')
+class OddEvenOperator(LinearOperator):
+    def __init__(self, device):
+        self.device = device
+    
+    def forward(self, data, **kwargs):
+        newdata = data.clone()
+        n=4
+        for i in range(0, newdata.shape[2], n):
+            newdata[:, :, i:i+2, :] = 0        
+        
+        # from IPython import embed; embed()
+        # newdata = data.clone()
+        # #newdata[:,:,0::2, :] = 0  # 
+        # n=4
+        # for i in range(0, newdata.shape[2], n):
+        #     newdata[:, :, i:i+2, :] = 0
+
+
+
+
+
+        
+        # nn = newdata.cpu().numpy()
+        # nnn=np.moveaxis(nn,1,-1)
+        # nnn = np.squeeze(nnn)
+        
+        # from PIL import Image
+        # import numpy as np
+
+        # # Normalize the array values to be in the 0-255 range for an image
+        # nnn_normalized = ((nnn - nnn.min()) / (nnn.max() - nnn.min()) * 255).astype(np.uint8)
+
+        # # Create an image from the normalized array
+        # image = Image.fromarray(nnn_normalized)
+
+        # # Save the image as a PNG file
+        # image.save('image.png')
+        
+        return newdata
+    
+    def transpose(self, data, **kwargs):
+        return data
+    
+    def ortho_project(self, data, **kwargs):
+        return data - self.forward(data, **kwargs)
+
+
 class NonLinearOperator(ABC):
     @abstractmethod
     def forward(self, data, **kwargs):

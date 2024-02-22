@@ -103,6 +103,10 @@ def main():
             # Forward measurement model (Ax + n)
             y = operator.forward(ref_img, mask=mask)
             y_n = noiser(y)
+        elif measure_config['operator'] ['name'] == 'oddeven':      
+            # select only even 
+            y = operator.forward(ref_img)    
+            y_n = noiser(y)              
 
         else: 
             # Forward measurement model (Ax + n)
