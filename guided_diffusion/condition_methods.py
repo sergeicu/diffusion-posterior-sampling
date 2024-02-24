@@ -98,7 +98,7 @@ class PosteriorSamplingPlus(ConditioningMethod):
         for _ in range(self.num_sampling):
             # TODO: use noiser?
             x_0_hat_noise = x_0_hat + 0.05 * torch.rand_like(x_0_hat)
-            difference = measurement - self.operator.forward(x_0_hat_noise)
+            difference = measurement - self.operator.forward(x_0_hat_noise) # sv407 - this is the main reconstruction loss
             norm += torch.linalg.norm(difference) / self.num_sampling
         
         norm_grad = torch.autograd.grad(outputs=norm, inputs=x_prev)[0]
