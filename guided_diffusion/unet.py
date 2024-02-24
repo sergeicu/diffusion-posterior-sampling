@@ -26,6 +26,7 @@ def create_model(
     image_size,
     num_channels,
     num_res_blocks,
+    dims=2,
     channel_mult="",
     learn_sigma=False,
     class_cond=False,
@@ -82,13 +83,33 @@ def create_model(
         use_scale_shift_norm=use_scale_shift_norm,
         resblock_updown=resblock_updown,
         use_new_attention_order=use_new_attention_order,
+        dims=dims,
     )
 
-    try:
-        model.load_state_dict(th.load(model_path, map_location='cpu'))
-    except Exception as e:
-        print(f"Got exception: {e} / Randomly initialize")
     return model
+
+def load_weights(model,model_path)
+    if model_path:
+        try:
+            checkpoint = th.load(model_path, map_location='cpu')
+        
+
+            model.load_state_dict(checkpoint)
+            
+            
+            #model.load_state_dict(checkpoint['optimizer_state_dict'])
+            # epoch = checkpoint['epoch']
+            # loss = checkpoint['loss']
+
+            # model.eval()
+            # # - or -
+            # model.train()            
+            
+        except Exception as e:
+            print(f"Got exception: {e} / Weights file does not exist : {model_path}") 
+        
+    return model
+    
 
 class AttentionPool2d(nn.Module):
     """

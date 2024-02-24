@@ -49,6 +49,13 @@ def main():
     
     # Load model
     model = create_model(**model_config)
+    from IPython import embed; embed()
+    model = load_from_path(model,**model_config)
+    try:
+        model.load_state_dict(th.load(model_path, map_location='cpu'))
+    except Exception as e:
+        print(f"Got exception: {e} / Randomly initialize") # load the model for training here... 
+    
     model = model.to(device)
     model.eval()
 
