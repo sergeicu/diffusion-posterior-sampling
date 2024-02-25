@@ -21,11 +21,17 @@ python3 sample_condition.py \
 python3 sample_condition.py \
 --model_config=configs/model_config_3d.yaml \
 --diffusion_config=configs/diffusion_config.yaml \
---task_config=configs/oddeven_config.yaml
+--task_config=configs/oddeven_config_cardiac.yaml
 
 # TODO: 
-- build 3D dataloader... 
+- 
+- built 3D dataloader 
+- built 3D unet for which we can run inferrence 
+
+
 - reduce unet size
+- may need to change this: def get_dataloader(dataset: VisionDataset, to handle Dataset and VisionDataset in sample_condition.py - depending on the case 
+- may need to change "save_root" -> since it is writing to the same thing as odd_even .. 
 
 
 # NEXT STEPS: 

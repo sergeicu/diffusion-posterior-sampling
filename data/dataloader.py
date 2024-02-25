@@ -66,7 +66,9 @@ import scipy.io as sio
 
 @register_dataset(name='acdc')
 class ACDCDataset(Dataset):
-    def __init__(self, root,  split='train'):
+    def __init__(self, root,  split='train', transforms=None):
+        # NB transforms are unused here - only imported for legacy reasons -> from DPS structure -> to minimize changes to sample_condition.py file 
+        
         self.split = split
         self.imageNum = []
         self.dataroot = root
@@ -150,5 +152,11 @@ class ACDCDataset(Dataset):
         [data, label] = Util.transform_augment([dataA, dataB], split=self.split, min_max=(-1, 1))
 
         # return {'S': data, 'T': label, 'SL': label_dataA, 'TL': label_dataB, 'nS':nsample, 'P':dataPath, 'Index': index}
+        
+        # squeeze to 3 dims 
+        # if data.ndim == 4 and data.shape[0]==1:
+        #     data = data[0,...]
+            
+            
         return data
     

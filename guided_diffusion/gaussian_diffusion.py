@@ -173,10 +173,11 @@ class GaussianDiffusion:
                       measurement,
                       measurement_cond_fn,
                       record,
-                      save_root):
+                      save_root): 
         """
         The function used for sampling from noise.
         """ 
+        
         img = x_start
         device = x_start.device
 
@@ -202,7 +203,9 @@ class GaussianDiffusion:
             if record:
                 if idx % 10 == 0:
                     file_path = os.path.join(save_root, f"progress/x_{str(idx).zfill(4)}.png")
-                    plt.imsave(file_path, clear_color(img))
+                    # do not save 3D nifti files (only works for png for now)
+                    if not img.ndim == 5:
+                        plt.imsave(file_path, clear_color(img))
 
         return img       
         

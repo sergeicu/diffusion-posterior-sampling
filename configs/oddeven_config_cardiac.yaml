@@ -5,7 +5,7 @@ conditioning:
 
 data:
   name: acdc
-  root: ./data/samples/
+  root: ./data/acdc/data_ED_ES/
 
 measurement:
   operator:
