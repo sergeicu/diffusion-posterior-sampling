@@ -41,6 +41,7 @@ def create_model(
     use_fp16=False,
     use_new_attention_order=False,
     model_path='',
+    in_channels=3,
 ):
     if channel_mult == "":
         if image_size == 512:
@@ -64,12 +65,17 @@ def create_model(
             attention_ds.append(image_size // int(res))
     else:
         raise NotImplementedError
+    
+    if learn_sigma:     
+        out_channels = in_channels * 2 
+    else: 
+        out_channels = in_channels 
 
     model= UNetModel(
         image_size=image_size,
-        in_channels=3,
+        in_channels=in_channels,
         model_channels=num_channels,
-        out_channels=(3 if not learn_sigma else 6),
+        out_channels=out_channels, 
         num_res_blocks=num_res_blocks,
         attention_resolutions=tuple(attention_ds),
         dropout=dropout,
@@ -88,7 +94,7 @@ def create_model(
 
     return model
 
-def load_weights(model,model_path)
+def load_weights(model,model_path):
     if model_path:
         try:
             checkpoint = th.load(model_path, map_location='cpu')
