@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 from guided_diffusion.condition_methods import get_conditioning_method
 from guided_diffusion.measurements import get_noise, get_operator
-from guided_diffusion.unet import create_model
+from guided_diffusion.unet import create_model, load_weights
 from guided_diffusion.gaussian_diffusion import create_sampler
 from data.dataloader import get_dataset, get_dataloader
 from util.img_utils import clear_color, mask_generator
@@ -49,13 +49,7 @@ def main():
     
     # Load model
     model = create_model(**model_config)
-    from IPython import embed; embed()
-    model = load_from_path(model,**model_config)
-    try:
-        model.load_state_dict(th.load(model_path, map_location='cpu'))
-    except Exception as e:
-        print(f"Got exception: {e} / Randomly initialize") # load the model for training here... 
-    
+    model = load_weights(model,model_config['model_path'])
     model = model.to(device)
     model.eval()
 
@@ -124,9 +118,11 @@ def main():
         x_start = torch.randn(ref_img.shape, device=device).requires_grad_()
         sample = sample_fn(x_start=x_start, measurement=y_n, record=True, save_root=out_path)
 
-        plt.imsave(os.path.join(out_path, 'input', fname), clear_color(y_n))
-        plt.imsave(os.path.join(out_path, 'label', fname), clear_color(ref_img))
-        plt.imsave(os.path.join(out_path, 'recon', fname), clear_color(sample))
+
+        if not model_config['dims']==3: 
+            plt.imsave(os.path.join(out_path, 'input', fname), clear_color(y_n))
+            plt.imsave(os.path.join(out_path, 'label', fname), clear_color(ref_img))
+            plt.imsave(os.path.join(out_path, 'recon', fname), clear_color(sample))
 
 if __name__ == '__main__':
     main()
