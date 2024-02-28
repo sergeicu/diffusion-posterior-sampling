@@ -158,5 +158,5 @@ class ACDCDataset(Dataset):
         #     data = data[0,...]
             
             
-        return data
+        return data,dataPath
     

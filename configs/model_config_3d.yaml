@@ -1,15 +1,15 @@
 # Defaults for image training.
 
 image_size: 128
-num_channels: 128
+num_channels: 8
 num_res_blocks: 1
-channel_mult: ""
+channel_mult: 1,2,4,4
 learn_sigma: True
 class_cond: False
 use_checkpoint: False
-attention_resolutions: 16
+attention_resolutions: 10
 num_heads: 4
-num_head_channels: 64
+#num_head_channels: 64
 num_heads_upsample: -1
 use_scale_shift_norm: True
 dropout: 0.0
@@ -19,4 +19,53 @@ use_new_attention_order: False
 dims: 3
 in_channels: 1
 
-model_path: "" # replace with trained DDPM model here
+model_path: "/fileserver/Rad-Warfield-e2/Groups/Imp-Recons/serge/code/diffusion/experiments/s20240209_oecorr/guided-diffusion/trained/openai-2024-02-28-05-25-58-668429/model019000.pt" # replace with trained DDPM model here
+
+
+
+# These settings are matched to DiffuseMorph 3D model. 
+# Specifically: 
+  
+  # Parameters that were changed in DPS (when swapping 2D to 3D)
+    #     inner_channel: 8 -> to match diffusemorph 
+    #     channel_multiplier: [1,2,4,4] -> to match diffusemorph 
+    #     attention_resolutions: 10    -> to match diffusemorph 
+  # Other parmeters that had to be changed 
+    #     #num_head_channels: 64 -> commented out in DPS to avoid errors 
+    #     GroupNorm8 instead of GroupNorm32 -> changed in guided_diffusion/nn.py -> def normalization(channels): -> return GroupNorm32(32, channels) to return GroupNorm8(8, channels)
+  # Parameters that were unchanged in DPS (when swapping 2D to 3D)
+    #     num_res_blocks: 1
+    #     num_heads: 4
+  # Parameters in DPS that are not explicitly set in DiffuseMorph: 
+    # tbd
+
+
+  # DiffuseMorph 3D model
+  #     "inner_channel": 8,
+  #     "channel_multiplier": [1, 2, 4, 4],
+  #     "attn_res": [10],
+  #     "res_blocks": 1, -> number of residual blocks per level 
+  #     num_heads -> default to 4 
+
+
+  # DPS 2D model (old)
+  #     num_channels: 128 -> same as inner channels in DiffuseMorph
+  #     num_res_blocks: 1
+  #     channel_mult: "" -> what is it? 
+  #     learn_sigma: True
+  #     class_cond: False
+  #     attention_resolutions: 16 -> change to 10?? 
+  #     num_heads: 4
+  #     num_head_channels: 64
+  #     resblock_updown: True
+
+
+  #     if channel_mult == "":
+  #         if image_size == 512:
+  #             channel_mult = (0.5, 1, 1, 2, 2, 4, 4)
+  #         elif image_size == 256:
+  #             channel_mult = (1, 1, 2, 2, 4, 4)
+  #         elif image_size == 128:
+  #             channel_mult = (1, 1, 2, 3, 4)
+  #         elif image_size == 64:
+  #             channel_mult = (1, 2, 3, 4)
