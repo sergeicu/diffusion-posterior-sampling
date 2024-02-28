@@ -7,6 +7,9 @@ import torch
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 
+import nibabel as nb
+import numpy as np 
+
 from guided_diffusion.condition_methods import get_conditioning_method
 from guided_diffusion.measurements import get_noise, get_operator
 from guided_diffusion.unet import create_model, load_weights
@@ -89,7 +92,7 @@ def main():
         )
         
     # Do Inference
-    for i, ref_img in enumerate(loader):
+    for i, (ref_img,impath) in enumerate(loader):
         logger.info(f"Inference for image {i}")
         fname = str(i).zfill(5) + '.png'
         ref_img = ref_img.to(device)
@@ -117,7 +120,16 @@ def main():
         # Sampling
         x_start = torch.randn(ref_img.shape, device=device).requires_grad_()
         sample = sample_fn(x_start=x_start, measurement=y_n, record=True, save_root=out_path)
-
+        
+        for ii, sam in enumerate(sample):
+            sam = sam.permute(2,3,1,0)
+            sam = sam.cpu().numpy()
+            imo = nb.Nifti1Image(sam, affine=np.eye(4))
+            savename = os.path.basename(impath[ii]).replace(".mat", ".nii.gz")
+            savename_full = out_path + "/"  + savename
+            nb.save(imo, savename_full)
+            print(f"Saved to: {savename_full}")
+            
 
         if not model_config['dims']==3: 
             plt.imsave(os.path.join(out_path, 'input', fname), clear_color(y_n))
