@@ -18,23 +18,24 @@ python3 sample_condition.py \
 --task_config=configs/oddeven_config.yaml
 
 
+
 python3 sample_condition.py \
 --model_config=configs/model_config_3d.yaml \
 --diffusion_config=configs/diffusion_config.yaml \
 --task_config=configs/oddeven_config_cardiac.yaml
 
+
+
 # TODO: 
-- 
-- built 3D dataloader 
-- built 3D unet for which we can run inferrence 
 
-
-- reduce unet size
-- may need to change this: def get_dataloader(dataset: VisionDataset, to handle Dataset and VisionDataset in sample_condition.py - depending on the case 
 - may need to change "save_root" -> since it is writing to the same thing as odd_even .. 
+- create training routine for guided_diffusion... (this one will take some time... )
 
 
 # NEXT STEPS: 
-- integrate DPS into DDPM in diffusemorph 
-- at first we need to do it without 
+- implement DPS with DDPM_only trained DDM 
+    - first need to implement standard inferrence lol 
+    - 
+
+- [less priority] train voxelmorph - aka DiffuseMorph without DDM (just direct image )
 

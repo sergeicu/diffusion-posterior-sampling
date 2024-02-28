@@ -9,6 +9,7 @@ from tqdm.auto import tqdm
 from util.img_utils import clear_color
 from .posterior_mean_variance import get_mean_processor, get_var_processor
 
+from guided_diffusion.extra import LossType
 
 
 __SAMPLER__ = {}
@@ -187,6 +188,7 @@ class GaussianDiffusion:
             
             img = img.requires_grad_()
             out = self.p_sample(x=img, t=time, model=model)
+            # from IPython import embed; embed()
             
             # Give condition.
             noisy_measurement = self.q_sample(measurement, t=time)
