@@ -6,6 +6,9 @@ import numpy as np
 import torch
 from tqdm.auto import tqdm
 
+import nibabel as nb 
+
+
 from util.img_utils import clear_color
 from .posterior_mean_variance import get_mean_processor, get_var_processor
 
@@ -181,6 +184,7 @@ class GaussianDiffusion:
         img = x_start
         device = x_start.device
 
+
         pbar = tqdm(list(range(self.num_timesteps))[::-1])
         for idx in pbar:
             time = torch.tensor([idx] * img.shape[0], device=device)
@@ -197,6 +201,22 @@ class GaussianDiffusion:
                                       noisy_measurement=noisy_measurement,
                                       x_prev=img,
                                       x_0_hat=out['pred_xstart'])
+            
+            if idx==999:
+                from IPython import embed; embed()
+            if idx%50==0:
+                from IPython import embed; embed()
+                outi = out['sample'].permute(3,4,2,0,1).cpu().detach().numpy()[:,:,:,0,0]
+                nb.save(nb.Nifti1Image(outi,affine=np.eye(4)),f"./results/oddeven/patient001_iso_d_out{idx}.nii.gz")
+                outi = out['pred_xstart'].permute(3,4,2,0,1).detach().cpu().numpy()[:,:,:,0,0]
+                nb.save(nb.Nifti1Image(outi,affine=np.eye(4)),f"./results/oddeven/patient001_iso_d_predxstart{idx}.nii.gz")
+                outi = noisy_measurement.permute(3,4,2,0,1).detach().cpu().numpy()[:,:,:,0,0]
+                nb.save(nb.Nifti1Image(outi,affine=np.eye(4)),f"./results/oddeven/patient001_iso_d_noisy_measurement{idx}.nii.gz")
+                outi = img.permute(3,4,2,0,1).detach().cpu().numpy()[:,:,:,0,0]
+                nb.save(nb.Nifti1Image(outi,affine=np.eye(4)),f"./results/oddeven/patient001_iso_d_img{idx}.nii.gz")
+
+            
+                        
             img = img.detach_()
            
             pbar.set_postfix({'distance': distance.item()}, refresh=False)

@@ -93,6 +93,15 @@ def main():
         
     # Do Inference
     for i, (ref_img,impath) in enumerate(loader):
+        
+        # from IPython import embed; embed()
+        ii=0
+        im = ref_img.permute(3,4,2,0,1).cpu().numpy()[:,:,:,0,0]
+        nb.save(nb.Nifti1Image(im,affine=np.eye(4)), "./results/oddeven/patient001_iso_input.nii.gz")
+
+        
+        
+        
         logger.info(f"Inference for image {i}")
         fname = str(i).zfill(5) + '.png'
         ref_img = ref_img.to(device)
@@ -117,6 +126,13 @@ def main():
             y = operator.forward(ref_img)
             y_n = noiser(y)
          
+         
+        im2 = y.permute(3,4,2,0,1).cpu().numpy()[:,:,:,0,0]
+        nb.save(nb.Nifti1Image(im2,affine=np.eye(4)), "./results/oddeven/patient001_iso_y.nii.gz")
+        
+        im3 = y_n.permute(3,4,2,0,1).cpu().numpy()[:,:,:,0,0]
+        nb.save(nb.Nifti1Image(im3,affine=np.eye(4)), "./results/oddeven/patient001_iso_y_noised.nii.gz")
+                 
         # Sampling
         x_start = torch.randn(ref_img.shape, device=device).requires_grad_()
         sample = sample_fn(x_start=x_start, measurement=y_n, record=True, save_root=out_path)
