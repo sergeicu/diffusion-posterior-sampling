@@ -187,9 +187,11 @@ class GaussianDiffusion:
             img = img.requires_grad_()
             out = self.p_sample(x=img, t=time, model=model)
             
-            # Give condition.
+            # Give condition. -> that's original image with odd/even lines + sigma_noise -> that is now being scaled with correct noise level
             noisy_measurement = self.q_sample(measurement, t=time)
 
+            # this is where al lthe magic happens...
+            # this is where we find the difference between predicted out...(mean of noise... )
             # TODO: how can we handle argument for different condition method?
             img, distance = measurement_cond_fn(x_t=out['sample'],
                                       measurement=measurement,

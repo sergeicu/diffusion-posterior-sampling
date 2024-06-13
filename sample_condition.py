@@ -104,9 +104,9 @@ def main():
             y = operator.forward(ref_img, mask=mask)
             y_n = noiser(y)
         elif measure_config['operator'] ['name'] == 'oddeven':      
-            # select only even 
-            y = operator.forward(ref_img)    
-            y_n = noiser(y)              
+            # select only even b
+            y = operator.forward(ref_img)     # here we are selecting odd-even 
+            y_n = noiser(y)        # we are essentially adding 5% noise to our odd even image...       
 
         else: 
             # Forward measurement model (Ax + n)
@@ -114,7 +114,7 @@ def main():
             y_n = noiser(y)
          
         # Sampling
-        x_start = torch.randn(ref_img.shape, device=device).requires_grad_()
+        x_start = torch.randn(ref_img.shape, device=device).requires_grad_() # here we sample random noise to start with 
         sample = sample_fn(x_start=x_start, measurement=y_n, record=True, save_root=out_path)
 
         plt.imsave(os.path.join(out_path, 'input', fname), clear_color(y_n))
